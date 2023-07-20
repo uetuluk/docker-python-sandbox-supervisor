@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from container import create_container, check_container, upload_file, download_file
+import requests
 
 
 class Code(BaseModel):
@@ -66,3 +67,26 @@ async def create_download_file(file_name: str):
     file_response = await download_file(container_id, file_name)
 
     return file_response
+
+
+@app.post("/run")
+async def sandbox_run(code: Code):
+    try:
+        container_id = user["container"]["container_id"]
+        container_port = user["container"]["container_port"]
+    except KeyError:
+        raise HTTPException(
+            status_code=500, detail="Container not found/created")
+
+    code = jsonable_encoder(code)
+    code_string = code.get("code_string")
+
+    container_url = f"http://localhost:{container_port}/run"
+
+    data = {
+        "code_string": code_string
+    }
+
+    container_response = requests.post(container_url, json=data)
+
+    return container_response.json()
