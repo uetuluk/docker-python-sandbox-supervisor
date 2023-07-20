@@ -5,11 +5,8 @@ production:
 	docker compose -f docker-compose.yml up
 
 setup-docker:
-	docker pull busybox
-
-run-celery:
-	docker compose up -d
-	celery -A celery_worker.app worker --loglevel=info
+	make build-all-images
+	docker compose pull
 
 build-production-image:
 	docker build -t docker-python-sandbox-supervisor:latest .
