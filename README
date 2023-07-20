@@ -1,0 +1,5 @@
+# Docker Python Sandbox Supervisor
+
+This supervisor will create a sandbox docker container for a request and additionally create a volume for the user.
+
+It will handle the size and time restrictions for the container.
