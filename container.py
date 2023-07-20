@@ -3,6 +3,7 @@ from docker.errors import DockerException
 from uuid import uuid4
 from fastapi import HTTPException, File
 from fastapi.responses import FileResponse
+from celery_worker import remove_container
 import os
 
 docker_client = DockerClient.from_env()
@@ -15,11 +16,15 @@ async def create_container():
     container_id = uuid4()
     try:
         # create volume
-        volume = docker_client.volumes.create(name=str(container_id))
+        volume = docker_client.volumes.create(
+            name=str(container_id), driver="local", driver_opts={"type": "tmpfs", "device": "tmpfs", "o": "size=2000m"})
 
         # create container
         container = docker_client.containers.run(DOCKER_IMAGE, name=str(container_id), volumes={
             str(volume.id): {"bind": "/mnt/data", "mode": "rw"}}, ports={3000: None}, detach=True)
+
+        # add to remove schedule
+        remove_container.apply_async(args=[container.id], countdown=600)
 
         container.reload()
         print(container.ports)
