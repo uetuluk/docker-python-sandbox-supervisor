@@ -14,11 +14,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   app:
-    image: "docker-python-sandbox-supervisor:latest"
+    image: "docker-python-sandbox-supervisor-development:latest"
     depends_on:
       - rabbitmq
       - worker
     ports:
       - "3000:3000"
     volumes:
+      - .:/app
       - /var/run/docker.sock:/var/run/docker.sock

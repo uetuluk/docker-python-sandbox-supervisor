@@ -4,7 +4,7 @@ from docker.errors import DockerException
 
 client = DockerClient.from_env()
 
-app = Celery('tasks', broker='pyamqp://guest@localhost:5672//')
+app = Celery('tasks', broker='pyamqp://guest@rabbitmq:5672//')
 
 
 @app.task
