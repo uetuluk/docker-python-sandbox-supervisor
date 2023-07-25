@@ -8,8 +8,10 @@ import os
 
 docker_client = DockerClient.from_env()
 
-DOCKER_IMAGE = "docker-python-sandbox:latest"
-DOCKER_NETWORK = "docker-python-sandbox-supervisor_app-network"
+DOCKER_IMAGE = os.environ.get(
+    "SANDBOX_DOCKER_IMAGE", "docker-python-sandbox:latest")
+DOCKER_NETWORK = os.environ.get(
+    "SUPERVISOR_DOCKER_NETWORK", "docker-python-sandbox-supervisor_app-network")
 
 
 async def create_container():
